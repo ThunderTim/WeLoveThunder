@@ -39,7 +39,9 @@
                 title="vimeo-player" 
                 src="https://player.vimeo.com/video/1060153490?h=029b8f310a&background=1&autoplay=1&loop=1&byline=0&title=0&muted=1&playsinline=1" 
                 frameborder="0"    
-                allow="autoplay; fullscreen"
+                allow="autoplay; fullscreen; picture-in-picture"
+                playsinline
+                webkit-playsinline
                 allowfullscreen>
             </iframe>
         </div>
@@ -92,7 +94,7 @@
                 </div>
 
                 <div class="section-three-art"> 
-                    <img class="request-icon" src="./images/icons/verification_people.svg" alt="Impact Icon">
+                    <img src="./images/icons/verification_people.svg" alt="Impact Icon">
                     <button id="request-verification-btn" class="request-button">Request Verification</button>
                 </div>
             </section>
@@ -317,30 +319,39 @@
     
         // Handle Vimeo player loading
         if (player) {
-            player.ready()
-                .then(() => {
-                    console.log("Vimeo player ready");
-                    
-                    setTimeout(() => {
-                        player.play()
-                            .then(() => {
-                                console.log("Video started playing");
-                                setTimeout(fadeOutPreloader, 1000);
-                            })
-                            .catch(error => {
-                                console.error("Error playing video:", error);
-                                setTimeout(fadeOutPreloader, 2000);
-                            });
-                    }, 1500);
-                })
-                .catch(error => {
-                    console.error("Vimeo player ready error:", error);
-                    setTimeout(fadeOutPreloader, 3000);
-                });
-        } else {
-            console.error("Vimeo player not found!");
-            setTimeout(fadeOutPreloader, 3000);
+    // Reduce Vimeo quality for mobile
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+        player.on('loaded', function() {
+            player.setQuality('540p'); // Lower quality for mobile
+        });
+    }
+    
+        // Simpler player ready handling
+        player.ready()
+            .then(() => {
+                console.log("Vimeo player ready");
+                setTimeout(() => {
+                    fadeOutPreloader();
+                    player.play().catch(error => {
+                        console.error("Autoplay may be blocked:", error);
+                        // Force preloader to fade out even if autoplay is blocked
+                        forcePreloaderFadeOut();
+                    });
+                }, 1000);
+            })
+            .catch(error => {
+                console.error("Vimeo player error:", error);
+                forcePreloaderFadeOut();
+            });
         }
+
+        window.addEventListener('pagehide', function() {
+            if (player) {
+                player.pause();
+            }
+            });
+
     
         // Additional window load and error handling
         window.addEventListener('load', function() {
