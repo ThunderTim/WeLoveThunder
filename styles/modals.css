@@ -136,9 +136,10 @@
 
 @media screen and (max-width: 480px) {
     .modal-content {
-        margin: 20% auto;
-        width: 90%;
-        padding: 20px;
+        margin: 15% auto;
+        width: 85%;
+        max-height: 80vh;
+        overflow-y: auto;
     }
     
     .form-group input {
