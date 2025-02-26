@@ -136,12 +136,12 @@
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Request Verification</h2>
-            <form id="verification-form" action="https://formsubmit.co/verification@thunder.love" method="POST">
+            <form id="verification-form" action="https://formsubmit.co/e885640c1362e6f0ec09c5b6ca098b18" method="POST"> <!-- From ormSubmit Use this random-like string e885640c1362e6f0ec09c5b6ca098b18 to replace your naked email address in the action attribute of your form.--> 
                 <!-- FormSubmit configuration options -->
                 <input type="hidden" name="_subject" value="New Verification Request from We Love Thunder">
                 <input type="hidden" name="_template" value="table">
                 <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_next" value="https://www.thunder.love/thanks.html">
+                <input type="hidden" name="_next" value="https://thunder.love/thanks.html">
                 
                 <div class="form-group">
                     <label for="name">Name</label>
@@ -201,6 +201,29 @@
         verificationBtn.addEventListener('click', function() {
             verificationModal.style.display = 'block';
             document.body.style.overflow = 'hidden';
+        });
+
+        // Only have ONE submit event listener for the verification form
+        let formSubmitted = false;  // This should be outside the event listener
+
+        verificationForm.addEventListener('submit', function(e) {
+            // If the form was recently submitted, prevent resubmission
+            if (formSubmitted) {
+                e.preventDefault();
+                return;
+            }
+            
+            // Mark the form as submitted to prevent multiple submissions
+            formSubmitted = true;
+            
+            // Show a message to the user
+            verificationMessage.textContent = "Submitting your request...";
+            verificationMessage.style.display = 'block';
+            
+            // Reset the flag after 5 seconds
+            setTimeout(() => {
+                formSubmitted = false;
+            }, 5000);
         });
         
         // For modal closing
